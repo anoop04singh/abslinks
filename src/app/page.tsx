@@ -1,101 +1,153 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { AlertCircle } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react"
+import { useAccount } from "wagmi"
+import { useWriteContract } from "wagmi"
+import { contractAbi } from "./abi"
+
+
+export default function Page() {
+  const [url, setUrl] = useState("")
+  const [shortUrl, setShortUrl] = useState("")
+  const [generatedLink, setGeneratedLink] = useState("")
+  const [error, setError] = useState("")
+
+  const{login} = useLoginWithAbstract();
+  const{address, isConnected} = useAccount();
+  const{writeContract} = useWriteContract();
+
+  async function submitTransaction() {
+    const txHash = await writeContract({
+      abi: contractAbi,
+      address: "0x47a2A8E0E99C070cEF44e3Fc22CFc8d976E16242",
+      functionName: "shortenLink",
+      args: [shortUrl,url]
+    });
+
+    console.log(`TxHash ${txHash} url: ${url} shortened to: ${shortUrl}`);
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setGeneratedLink("")
+
+    if (!url) {
+      setError("Please enter a URL to shorten.")
+      return
+    }
+
+    if (shortUrl && !/^[a-zA-Z0-9-]+$/.test(shortUrl)) {
+      setError("Short URL can only contain letters, numbers, and hyphens.")
+      return
+    }
+
+    if(!isConnected){
+      alert(`Account not Connected. Login and try again.`)
+      login();
+    }else{
+      alert(`Conncted to Account ${address}`);
+      console.log(address);
+      // const txHash = await writeContract({
+      //   abi: contractAbi,
+      //   address: "0x47a2A8E0E99C070cEF44e3Fc22CFc8d976E16242",
+      //   functionName: "shortenLink",
+      //   args: [shortUrl,url]
+      // })
+      submitTransaction();
+      
+    }
+
+
+    // Here you would typically call your API to create a short link
+    // For this example, we'll just use the provided short URL or generate a random string
+    // const finalShortUrl = shortUrl || Math.random().toString(36).substring(7)
+    // setGeneratedLink(`${window.location.origin}/${finalShortUrl}`)
+    // toast.success("Link shortened successfully!")
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex min-h-screen flex-col items-center justify-center p-4 relative">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <h1 className="text-5xl font-bold text-primary">Abstract Link Shortener</h1>
+          <p className="mt-2 text-xl text-muted-foreground">Shorten your links on chain with Abstract</p>
+          <Badge variant="secondary" className="mt-4">
+            Powered by Abstract Testnet
+          </Badge>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="url" className="block text-sm font-medium text-foreground mb-1">
+                URL to shorten
+              </Label>
+              <Input
+                id="url"
+                name="url"
+                type="url"
+                required
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                placeholder="https://example.com"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="shortUrl" className="block text-sm font-medium text-foreground mb-1">
+                Custom short URL (optional)
+              </Label>
+              <Input
+                id="shortUrl"
+                name="shortUrl"
+                type="text"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                placeholder="my-custom-url"
+                value={shortUrl}
+                onChange={(e) => setShortUrl(e.target.value)}
+              />
+              <p className="mt-1 text-sm text-muted-foreground">Leave blank for a randomly generated short URL</p>
+            </div>
+          </div>
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <div>
+            <Button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              Shorten Link
+            </Button>
+          </div>
+        </form>
+        {generatedLink && (
+          <div className="mt-4 text-center">
+            <p className="text-sm text-muted-foreground">Your shortened link:</p>
+            <a
+              href={generatedLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:text-primary/80"
+            >
+              {generatedLink}
+            </a>
+          </div>
+        )}
+      </div>
+      <footer className="absolute bottom-4 text-sm ">Created with ❤️ by <a href="https://www.github.com/anoop04singh">0xAnoop</a></footer>
     </div>
-  );
+  )
 }
+

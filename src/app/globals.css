@@ -1,21 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 192 96% 95%; /* Light Cyan (#E0F7FA) */
+    --foreground: 180 25% 20%; /* Deep Teal (#00796B) */
+
+    --card: 192 96% 85%; /* Sage Green (#A5D6A7) */
+    --card-foreground: 180 25% 20%; /* Deep Teal (#00796B) */
+
+    --popover: 192 96% 95%; /* Light Cyan (#E0F7FA) */
+    --popover-foreground: 180 25% 20%; /* Deep Teal (#00796B) */
+
+    --primary: 122 47% 45%; /* Vibrant Green (#4CAF50) */
+    --primary-foreground: 0 0% 100%; /* White (#FFFFFF) */
+
+    --secondary: 180 25% 20%; /* Deep Teal (#00796B) */
+    --secondary-foreground: 0 0% 100%; /* White (#FFFFFF) */
+
+    --muted: 180 25% 20%; /* Deep Teal (#00796B) */
+    --muted-foreground: 122 30% 60%; /* Sage Green (#A5D6A7) */
+
+    --accent: 122 47% 45%; /* Vibrant Green (#4CAF50) */
+    --accent-foreground: 0 0% 100%; /* White (#FFFFFF) */
+
+    --destructive: 0 62.8% 30.6%; /* (Unchanged destructive color) */
+    --destructive-foreground: 0 0% 100%; /* White (#FFFFFF) */
+
+    --border: 180 25% 20%; /* Deep Teal (#00796B) */
+    --input: 180 25% 20%; /* Deep Teal (#00796B) */
+    --ring: 122 47% 45%; /* Vibrant Green (#4CAF50) */
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background: linear-gradient(
+      to bottom,
+      hsl(192, 96%, 95%), /* Light Cyan (#E0F7FA) */
+      hsl(0, 0%, 100%),   /* White (#FFFFFF) */
+      hsl(122, 30%, 75%) /* Sage Green (#A5D6A7) */
+    );
+  }
 }
+
+
