@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use,useEffect, useState } from "react"
 import {  useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
@@ -9,10 +9,10 @@ import { useReadContract } from "wagmi"
 import { parseAbi } from "viem"
 
 
-export default function ShortLinkPage({ params }: { params: { shortlink: string } }) {
+export default function ShortLinkPage({ params }: { params: Promise<{ shortlink: string }> }) {
   const router = useRouter()
   const [countdown, setCountdown] = useState(5)
-  const shortlink = params.shortlink;
+  const {shortlink} = use(params)
 
   const {data} = useReadContract({
     address: "0x47a2A8E0E99C070cEF44e3Fc22CFc8d976E16242",
