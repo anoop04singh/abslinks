@@ -54,7 +54,7 @@ export default function ShortLinkPage({ params }: { params: Promise<{ shortlink:
         className="space-y-4"
       >
         <h1 className="text-5xl font-bold mb-4 text-primary">Redirecting you shortly</h1>
-        <p className="text-xl text-muted-foreground mb-8">Your link: /{params.shortlink}</p>
+        <p className="text-xl text-muted-foreground mb-8">Your link: ${shortlink}</p>
         <Badge variant="secondary" className="text-lg py-1 px-3">
           Deployed on Abstract Network
         </Badge>
